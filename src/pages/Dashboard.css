@@ -1,0 +1,1012 @@
+/* ==========================================================================
+   DASHBOARD MAIN LAYOUT & HERO (DARK FOREST GREEN THEME)
+   ========================================================================== */
+
+.page {
+  min-height: 100vh;
+  background-color: #f4f6f8;
+  color: #1a2e29;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.content.dash {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Hero Section matching the image */
+.dash-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #1c453c 0%, #153830 70%, #204b40 100%);
+  padding: 2.25rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(28, 69, 60, 0.15);
+}
+
+.dash-hero-eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d99b26;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.02em;
+}
+
+.dash-h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  font-family: Georgia, serif;
+}
+
+.dash-hero-sub {
+  color: #a3c2ba;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+/* Gold/Amber Accent Primary Button */
+.dash-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #d99b26;
+  color: #102621;
+  border: none;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.925rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(217, 155, 38, 0.3);
+  transition: all 0.2s ease;
+}
+
+.dash-btn-primary:hover {
+  background-color: #e5a732;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(217, 155, 38, 0.4);
+}
+
+.dash-btn-primary svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   STAT CARDS
+   ========================================================================== */
+
+.dash-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.dash-stat-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.dash-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-stat-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.dash-stat-card.is-teal .dash-stat-icon { background: #e6f4f1; color: #1c453c; }
+.dash-stat-card.is-amber .dash-stat-icon { background: #fef3c7; color: #b47818; }
+.dash-stat-card.is-green .dash-stat-icon { background: #dcfce7; color: #15803d; }
+.dash-stat-card.is-gold .dash-stat-icon { background: #fef9c3; color: #a16207; }
+
+.dash-stat-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.dash-stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a2e29;
+  line-height: 1.2;
+}
+
+.dash-stat-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   PATIENT TABLE PANEL & FILTERS
+   ========================================================================== */
+
+.dash-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.dash-panel-head {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dash-h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a2e29;
+}
+
+.dash-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dash-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dash-search svg {
+  position: absolute;
+  left: 0.75rem;
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+}
+
+.dash-search input {
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.2s;
+}
+
+.dash-search input:focus,
+.dash-date-input:focus {
+  border-color: #1c453c;
+  box-shadow: 0 0 0 3px rgba(28, 69, 60, 0.12);
+}
+
+.dash-date-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  outline: none;
+  color: #334155;
+}
+
+.dash-date-banner {
+  background: #e6f4f1;
+  color: #1c453c;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dash-date-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  color: #1c453c;
+}
+
+.dash-date-clear svg {
+  width: 14px;
+  height: 14px;
+}
+
+.dash-ghost-danger {
+  background: transparent;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s;
+}
+
+.dash-ghost-danger:hover {
+  background: #fef2f2;
+}
+
+.dash-ghost-danger svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   TABLE & AVATARS
+   ========================================================================== */
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dash-table th {
+  background: #f8fafc;
+  padding: 0.85rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dash-th-actions {
+  text-align: right;
+}
+
+.dash-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.dash-empty-row {
+  text-align: center;
+  color: #94a3b8;
+  padding: 2.5rem !important;
+}
+
+.dash-patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.dash-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.pal-teal { background: linear-gradient(135deg, #1c453c, #112d27); }
+.pal-gold { background: linear-gradient(135deg, #d99b26, #b47818); }
+.pal-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.pal-plum { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+.pal-rose { background: linear-gradient(135deg, #e11d48, #be123c); }
+
+.dash-patient-name {
+  color: #1a2e29;
+  font-size: 0.95rem;
+}
+
+.dash-patient-sub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+/* Status Pills */
+.dash-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dash-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dash-status-pill.is-completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+.dash-status-pill.is-completed .dash-status-dot { background: #16a34a; }
+
+.dash-status-pill.is-pending {
+  background: #fff7ed;
+  color: #c2410c;
+}
+.dash-status-pill.is-pending .dash-status-dot { background: #ea580c; }
+
+/* ==========================================================================
+   INLINE QUICK EDIT STYLING
+   ========================================================================== */
+
+.dash-table tbody tr:has(.dash-edit-box) {
+  background-color: #f4f8f7;
+}
+
+.dash-edit-box {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #a3c2ba;
+  box-shadow: 0 4px 12px rgba(28, 69, 60, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dash-edit-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.dash-edit-dates {
+  background: #ffffff;
+  padding: 0.85rem;
+  border-radius: 10px;
+  border: 1px solid #a3c2ba;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.dash-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dash-edit-field label {
+  font-size: 0.725rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1c453c;
+  letter-spacing: 0.03em;
+}
+
+.dash-edit-field input,
+.dash-edit-field select {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  background-color: #f8fafc;
+  color: #1a2e29;
+  transition: all 0.2s ease;
+}
+
+.dash-edit-field input:focus,
+.dash-edit-field select:focus {
+  background-color: #ffffff;
+  border-color: #1c453c;
+  box-shadow: 0 0 0 3px rgba(28, 69, 60, 0.15);
+}
+
+.dash-edit-field-spaced {
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   ROW ACTION BUTTONS
+   ========================================================================== */
+
+.dash-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dash-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.dash-icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dash-icon-btn:hover {
+  background: #f1f5f9;
+  color: #1a2e29;
+  border-color: #94a3b8;
+}
+
+.dash-icon-btn.is-blue {
+  color: #1c453c;
+  border-color: #a3c2ba;
+  background: #e6f4f1;
+}
+.dash-icon-btn.is-blue:hover {
+  background: #d1e9e3;
+}
+
+.dash-icon-btn.is-green {
+  color: #15803d;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+.dash-icon-btn.is-green:hover {
+  background: #dcfce7;
+}
+
+.dash-icon-btn.is-danger {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+.dash-icon-btn.is-danger:hover {
+  background: #fee2e2;
+}
+
+.dash-icon-btn.is-save {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(21, 128, 61, 0.3);
+}
+.dash-icon-btn.is-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(21, 128, 61, 0.4);
+}
+
+/* ==========================================================================
+   ULTRA-PREMIUM SaaS STAT CARDS (NEXT-LEVEL DESIGN)
+   ========================================================================== */
+
+.dash-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.dash-stat-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 30px -5px rgba(28, 69, 60, 0.05),
+              0 2px 8px -2px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+/* Background Soft Glow Pattern on Hover */
+.dash-stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(28, 69, 60, 0.06) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(163, 194, 186, 0.5);
+  box-shadow: 0 20px 35px -8px rgba(28, 69, 60, 0.12),
+              0 6px 15px -3px rgba(0, 0, 0, 0.04);
+}
+
+.dash-stat-card:hover::after {
+  opacity: 1;
+}
+
+/* Left Accent Indicator Bar */
+.dash-stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.3s ease;
+}
+
+.dash-stat-card.is-teal::before { background: #1c453c; }
+.dash-stat-card.is-amber::before { background: #d99b26; }
+.dash-stat-card.is-green::before { background: #16a34a; }
+.dash-stat-card.is-gold::before { background: #ca8a04; }
+
+.dash-stat-card:hover::before {
+  top: 12%;
+  bottom: 12%;
+  width: 5px;
+}
+
+/* 3D Icon Container with Mesh/Glow */
+.dash-stat-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.dash-stat-card:hover .dash-stat-icon {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+.dash-stat-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.2px;
+  transition: transform 0.3s ease;
+}
+
+/* Specific Theme Gradients & Glows for Icons */
+.dash-stat-card.is-teal .dash-stat-icon {
+  background: linear-gradient(135deg, #e6f4f1 0%, #cbe8e1 100%);
+  color: #1c453c;
+  box-shadow: 0 8px 18px -4px rgba(28, 69, 60, 0.25);
+}
+
+.dash-stat-card.is-amber .dash-stat-icon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%);
+  color: #9a6108;
+  box-shadow: 0 8px 18px -4px rgba(217, 155, 38, 0.3);
+}
+
+.dash-stat-card.is-green .dash-stat-icon {
+  background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+  color: #14532d;
+  box-shadow: 0 8px 18px -4px rgba(22, 163, 74, 0.25);
+}
+
+.dash-stat-card.is-gold .dash-stat-icon {
+  background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+  color: #854d0e;
+  box-shadow: 0 8px 18px -4px rgba(202, 138, 4, 0.25);
+}
+
+/* Clean Typography Hierarchy */
+.dash-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-stat-label {
+  font-size: 0.725rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.dash-stat-value {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-top: 0.2rem;
+  letter-spacing: -0.03em;
+  font-feature-settings: "tnum";
+}
+
+.dash-stat-sub {
+  font-size: 0.775rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-top: 0.3rem;
+}
+
+
+/* ==========================================================================
+   ULTRA-PREMIUM MEDICAL DASHBOARD DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+  --primary-dark: #1c453c;
+  --primary-glow: rgba(28, 69, 60, 0.15);
+  --accent-amber: #d99b26;
+  --accent-green: #16a34a;
+  --accent-danger: #dc2626;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-subtle: rgba(226, 232, 240, 0.8);
+  --shadow-ambient: 0 20px 40px -12px rgba(15, 23, 42, 0.05);
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+}
+
+/* ==========================================================================
+   1. CONTAINER PANEL & GLASS HEADER
+   ========================================================================== */
+
+.dash-panel {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-ambient), 0 1px 3px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  margin-top: 1.5rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dash-panel:hover {
+  border-color: rgba(163, 194, 186, 0.6);
+  box-shadow: 0 24px 50px -12px rgba(28, 69, 60, 0.08);
+}
+
+.dash-panel-head {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.dash-head-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dash-h3 {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.dash-count-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: 99px;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   2. SEARCH & FILTER CONTROLS
+   ========================================================================== */
+
+.dash-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.dash-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dash-search svg {
+  position: absolute;
+  left: 1rem;
+  width: 18px;
+  height: 18px;
+  color: #94a3b8;
+  stroke-width: 2.2px;
+  transition: color 0.25s ease;
+  pointer-events: none;
+}
+
+.dash-search input {
+  padding: 0.7rem 1.1rem 0.7rem 2.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  outline: none;
+  width: 290px;
+  background-color: #ffffff;
+  color: var(--text-main);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.dash-search input::placeholder {
+  color: #94a3b8;
+}
+
+.dash-search input:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.dash-search input:focus ~ svg {
+  color: var(--primary-dark);
+}
+
+.dash-date-input {
+  padding: 0.7rem 1.1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  outline: none;
+  background-color: #ffffff;
+  color: #334155;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.dash-date-input:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.dash-ghost-danger {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--accent-danger);
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dash-ghost-danger:hover {
+  background: var(--accent-danger);
+  color: #ffffff;
+  border-color: var(--accent-danger);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px -4px rgba(220, 38, 38, 0.35);
+}
+
+/* ==========================================================================
+   3. TABLE LAYOUT & ROW STYLING
+   ========================================================================== */
+
+.dash-table-wrapper {
+  overflow-x: auto;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+
+.dash-table th {
+  background: #f8fafc;
+  padding: 1.1rem 2rem;
+  font-size: 0.725rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dash-table td {
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 0.925rem;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.dash-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dash-table tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* ==========================================================================
+   4. AVATARS, STATUS BADGES & ACTIONS
+   ========================================================================== */
+
+.dash-patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.dash-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #ffffff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.35);
+}
+
+.dash-avatar.alt-color {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  box-shadow: 0 6px 16px -4px rgba(225, 29, 72, 0.35);
+}
+
+.dash-patient-name {
+  color: var(--text-main);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.dash-patient-sub {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.dash-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.dash-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dash-status-pill.is-pending {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+}
+
+.dash-status-pill.is-pending .dash-status-dot {
+  background: #ea580c;
+  box-shadow: 0 0 10px rgba(234, 88, 12, 0.8);
+}
+
+.dash-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.dash-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dash-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2px;
+}
+
+.dash-icon-btn:hover {
+  transform: translateY(-2px);
+}
+
+.dash-icon-btn.is-edit:hover {
+  color: var(--primary-dark);
+  background: #e6f4f1;
+  border-color: var(--primary-dark);
+  box-shadow: 0 8px 18px -4px rgba(28, 69, 60, 0.25);
+}
+
+.dash-icon-btn.is-report:hover {
+  color: var(--accent-green);
+  background: #dcfce7;
+  border-color: var(--accent-green);
+  box-shadow: 0 8px 18px -4px rgba(22, 163, 74, 0.25);
+}
+
+.dash-icon-btn.is-delete:hover {
+  color: var(--accent-danger);
+  background: #fee2e2;
+  border-color: var(--accent-danger);
+  box-shadow: 0 8px 18px -4px rgba(220, 38, 38, 0.25);
+}
