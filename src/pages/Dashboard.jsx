@@ -1,7 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { pdf } from '@react-pdf/renderer'
 import Header from '../components/Header'
 import { usePatients } from '../context/PatientContext'
+// NOTE: adjust this import path to wherever ReportDocument.jsx actually
+// lives in your project (e.g. '../pdf/ReportDocument' or
+// '../reports/ReportDocument') — prepareReportCodes attaches the QR /
+// barcode data URLs before we hand the patient to the PDF renderer.
+import ReportDocument, { prepareReportCodes } from '../components/ReportDocument'
 import './Dashboard.css'
 
 /*
@@ -77,6 +83,16 @@ const IconCalendar = () => (
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
     <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+)
+const IconWhatsapp = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.05-1.36A10 10 0 1 0 12 2Zm0 18.2a8.16 8.16 0 0 1-4.17-1.14l-.3-.18-3 .81.8-2.93-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.14c-.24-.12-1.44-.71-1.66-.79s-.38-.12-.55.12-.63.79-.78.95-.28.18-.52.06a6.7 6.7 0 0 1-3.33-2.91c-.25-.43.25-.4.72-1.33a.46.46 0 0 0-.02-.43c-.06-.12-.55-1.33-.76-1.82s-.4-.41-.55-.42h-.47a.9.9 0 0 0-.65.3 2.74 2.74 0 0 0-.85 2 4.77 4.77 0 0 0 1 2.52 10.9 10.9 0 0 0 4.18 3.7c1.51.65 2.1.71 2.85.6a2.43 2.43 0 0 0 1.6-1.13 1.94 1.94 0 0 0 .13-1.13c-.06-.1-.22-.16-.46-.28Z" />
+  </svg>
+)
+const IconSpinner = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="dash-spin">
+    <path d="M21 12a9 9 0 1 1-9-9" />
   </svg>
 )
 
@@ -204,6 +220,158 @@ export default function Dashboard() {
   const [editCollDate, setEditCollDate] = useState('')
 
   const [editReportDate, setEditReportDate] = useState('')
+
+  // ----------------------------------------------------------------------
+  // REPORT BUTTON (single icon next to the patient name -> always
+  // generates + downloads the letterhead version of the report PDF)
+  // ----------------------------------------------------------------------
+
+  const [generatingReportId, setGeneratingReportId] = useState(null)
+
+  const [readyReportId, setReadyReportId] = useState(null)
+
+  const readyTimeoutRef = useRef(null)
+
+  // Clear any pending "just downloaded" tick timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (readyTimeoutRef.current) {
+        clearTimeout(readyTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  /*
+  |--------------------------------------------------------------------------
+  | GENERATE + DOWNLOAD REPORT PDF (with or without letterhead)
+  |--------------------------------------------------------------------------
+  */
+
+  // Small helper: trigger a normal browser download for a Blob/File.
+  const downloadBlob = (blob, fileName) => {
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  // Builds the (letterhead) report PDF for a patient and returns it as a
+  // File, ready to hand to navigator.share() or to download. Shared by
+  // both share entry points below so the PDF-generation logic lives in
+  // exactly one place.
+  const generatePatientReportFile = async (patient) => {
+    const withLetterhead = true
+
+    let patientWithCodes
+    try {
+      patientWithCodes = await prepareReportCodes(patient, {
+        forceLetterheadParam: withLetterhead,
+      })
+    } catch (codeErr) {
+      // QR/barcode generation failed (e.g. canvas unavailable). Don't
+      // let that take the whole thing down — fall back to the plain
+      // patient object so the report still generates, just without the
+      // QR/barcode images.
+      console.error(
+        'prepareReportCodes failed, continuing without QR/barcode:',
+        codeErr
+      )
+      patientWithCodes = patient
+    }
+
+    // Belt-and-braces: prepareReportCodes should never resolve to
+    // something falsy, but if it somehow does, fall back to the raw
+    // patient rather than handing ReportDocument `undefined`.
+    if (!patientWithCodes) {
+      patientWithCodes = patient
+    }
+
+    const blob = await pdf(
+      <ReportDocument patient={patientWithCodes} withLetterhead={withLetterhead} />
+    ).toBlob()
+
+    const safeName = (patient.name || 'patient').trim().replace(/\s+/g, '_')
+    const fileName = `${safeName}_report_letterhead.pdf`
+
+    return new File([blob], fileName, { type: 'application/pdf' })
+  }
+
+  const flashReady = (patientId) => {
+    setReadyReportId(patientId)
+    if (readyTimeoutRef.current) clearTimeout(readyTimeoutRef.current)
+    readyTimeoutRef.current = setTimeout(() => setReadyReportId(null), 3200)
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | SHARE — always opens WhatsApp Web
+  |--------------------------------------------------------------------------
+  | IMPORTANT LIMITATION: neither wa.me nor api.whatsapp.com links accept
+  | a file — no website (not even WhatsApp itself) can auto-attach a file
+  | into the WhatsApp Web chat box, only pre-filled TEXT. So the flow is:
+  | generate the PDF, download it, then open web.whatsapp.com with a
+  | pre-filled message — the user attaches the just-downloaded PDF with
+  | one click on the paperclip. There's no code-only way around that.
+  |
+  | The WhatsApp Web tab is opened SYNCHRONOUSLY (before the PDF/await
+  | below) and its location is set once ready — opening it only after an
+  | `await` would make most browsers treat it as a popup and block it.
+  |--------------------------------------------------------------------------
+  */
+
+  const handleWhatsAppShare = async (patient) => {
+    if (generatingReportId) return
+
+    if (!patient || !patient.id) {
+      console.error('handleWhatsAppShare called without a valid patient:', patient)
+      window.alert('No patient selected for this report.')
+      return
+    }
+
+    // Open the tab right away (still inside the click's user-gesture),
+    // and fill it in once the PDF is ready — avoids popup blockers.
+    // NOTE: no 'noopener' here — that flag makes window.open() return
+    // null, which is exactly what was leaving the tab stuck on
+    // about:blank (we had no reference left to redirect it with).
+    const waWindow = window.open('about:blank', '_blank')
+
+    setGeneratingReportId(patient.id)
+
+    try {
+      const file = await generatePatientReportFile(patient)
+
+      // Download it first so it's sitting in Downloads, ready to attach.
+      downloadBlob(file, file.name)
+
+      const message = `Lab report for ${
+        patient.name || 'patient'
+      } — Raj Pathology Center.\nPDF "${file.name}" has been downloaded — please attach it here.`
+
+      const whatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(
+        message
+      )}`
+
+      if (waWindow) {
+        waWindow.location.href = whatsappUrl
+      } else {
+        // Popup was genuinely blocked despite opening synchronously
+        // (rare) — try once more directly.
+        window.open(whatsappUrl, '_blank')
+      }
+
+      flashReady(patient.id)
+    } catch (err) {
+      console.error('Failed to generate report PDF:', err)
+      if (waWindow) waWindow.close()
+      window.alert('Could not generate the report PDF. Please try again.')
+    } finally {
+      setGeneratingReportId(null)
+    }
+  }
 
   /*
   |--------------------------------------------------------------------------
@@ -642,6 +810,8 @@ export default function Dashboard() {
 
                 <th>Status</th>
 
+                <th>Report</th>
+
                 <th className="dash-th-actions">Actions</th>
               </tr>
             </thead>
@@ -653,7 +823,7 @@ export default function Dashboard() {
                 0 && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="dash-empty-row"
                   >
                     {patients.length ===
@@ -911,6 +1081,35 @@ export default function Dashboard() {
                           ? 'Completed'
                           : 'Pending'}
                       </span>
+                    </td>
+
+                    {/* ====================================================
+                        REPORT — standalone share/download box
+                    ===================================================== */}
+
+                    <td>
+                      <button
+                        className={`dash-report-whatsapp-btn ${
+                          readyReportId === p.id ? 'is-ready' : ''
+                        }`}
+                        title={
+                          generatingReportId === p.id
+                            ? 'Preparing…'
+                            : readyReportId === p.id
+                            ? 'Downloaded — attach it in the WhatsApp tab'
+                            : 'Download report + open WhatsApp Web'
+                        }
+                        disabled={generatingReportId === p.id}
+                        onClick={() => handleWhatsAppShare(p)}
+                      >
+                        {generatingReportId === p.id ? (
+                          <IconSpinner />
+                        ) : readyReportId === p.id ? (
+                          <IconCheck />
+                        ) : (
+                          <IconWhatsapp />
+                        )}
+                      </button>
                     </td>
 
                     {/* ====================================================

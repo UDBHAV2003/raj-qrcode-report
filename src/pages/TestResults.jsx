@@ -296,6 +296,28 @@ function getMatchingChildParams(catalogTest, searchWords) {
   })
 }
 
+// ---------------------------------------------------------------------
+// FIX: Firestore's setDoc() throws if ANY nested field value is
+// `undefined` (e.g. "Unsupported field value: undefined"). Rather than
+// hunting down every place a field could end up undefined (catalog data
+// changes over time, new params get added, etc.), this recursively walks
+// the whole save payload right before it goes to saveTestResults and
+// swaps undefined -> null, which Firestore accepts fine.
+// ---------------------------------------------------------------------
+function sanitizeForFirestore(value) {
+  if (Array.isArray(value)) {
+    return value.map(sanitizeForFirestore)
+  }
+  if (value && typeof value === 'object') {
+    const clean = {}
+    for (const [key, val] of Object.entries(value)) {
+      clean[key] = val === undefined ? null : sanitizeForFirestore(val)
+    }
+    return clean
+  }
+  return value
+}
+
 export default function TestResults() {
   const { id } = useParams()
   // FIX: use the combined saveTestResults instead of separate
@@ -343,13 +365,24 @@ export default function TestResults() {
     const newKeys = keysToAdd.filter((key) => !alreadyAdded.has(key))
     if (newKeys.length === 0) return
 
+    // FIX: Firestore's setDoc() rejects `undefined` field values outright
+    // ("Unsupported field value: undefined"). Several catalog fields
+    // (method, isSerology, hasInduration, reportBlock, bold) are often
+    // simply absent on a given param, which made these come through as
+    // literal `undefined` here. Using `??` gives every field a safe
+    // Firestore-legal default (null / false) instead.
     const paramsToAdd = catalogT.params
       .filter((param) => newKeys.includes(param.key))
       .map((param) => ({
-        key: param.key, name: param.name, unit: param.unit || '',
+        key: param.key,
+        name: param.name,
+        unit: param.unit || '',
         range: resolveRange(param.range, patient.gender),
-        method: param.method, isSerology: param.isSerology,
-        hasInduration: param.hasInduration, reportBlock: param.reportBlock, bold: param.bold,
+        method: param.method ?? null,
+        isSerology: param.isSerology ?? false,
+        hasInduration: param.hasInduration ?? false,
+        reportBlock: param.reportBlock ?? null,
+        bold: param.bold ?? false,
       }))
 
     setTests((prev) => {
@@ -535,6 +568,12 @@ export default function TestResults() {
   // `results` together in a single state update / single Firestore
   // write, so there is no ordering race and result values are saved
   // reliably every time.
+  //
+  // FIX 2: the payload is now passed through sanitizeForFirestore()
+  // right before the write, so ANY stray `undefined` value anywhere in
+  // tests/results/remarks (not just the ones addParamsToTest already
+  // guards) gets converted to `null` instead of crashing setDoc() with
+  // "Unsupported field value: undefined".
   // ==================================================================
   const handleSave = async (e, generateReport = false) => {
     if (e) e.preventDefault()
@@ -545,12 +584,15 @@ export default function TestResults() {
     })
 
     try {
-      saveTestResults(patient.id, {
-        tests: processedTests,
-        results: values,
-        remarks,
-        showQualitativeUnitRange,
-      })
+      saveTestResults(
+        patient.id,
+        sanitizeForFirestore({
+          tests: processedTests,
+          results: values,
+          remarks,
+          showQualitativeUnitRange,
+        })
+      )
       if (generateReport) {
         navigate(`/patients/${patient.id}/report`)
       } else {

@@ -1009,4 +1009,52 @@
   background: #fee2e2;
   border-color: var(--accent-danger);
   box-shadow: 0 8px 18px -4px rgba(220, 38, 38, 0.25);
+} 
+
+/* *******pdf report with letterhead****** */
+
+/* ---- Report column: single circular WhatsApp icon button ---- */
+.dash-report-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #2fd66b 0%, #1fa855 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(31, 168, 85, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+}
+.dash-report-whatsapp-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(31, 168, 85, 0.4);
+}
+.dash-report-whatsapp-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.dash-report-whatsapp-btn:disabled {
+  cursor: default;
+  opacity: 0.65;
+  box-shadow: none;
+}
+.dash-report-whatsapp-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Success state — briefly shown right after the PDF downloads */
+.dash-report-whatsapp-btn.is-ready {
+  background: linear-gradient(135deg, #1f8a4c 0%, #2fa860 100%);
+}
+
+.dash-spin {
+  width: 16px;
+  height: 16px;
+  animation: dash-spin 0.8s linear infinite;
+}
+@keyframes dash-spin {
+  to { transform: rotate(360deg); }
 }
