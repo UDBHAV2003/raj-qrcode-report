@@ -36,7 +36,11 @@ export default function ReportView() {
         if (cancelled) return
         setPatient(withCodes)
 
-        const blob = await pdf(<ReportDocument patient={withCodes} />).toBlob()
+        // withLetterhead: true — this /report/:id route only ever runs when
+        // someone scans the QR code on the printed report, so it always
+        // renders the drawn-letterhead / digital version (grid patient card,
+        // FLAG column, signature footer) — never the blank pre-printed one.
+        const blob = await pdf(<ReportDocument patient={withCodes} withLetterhead />).toBlob()
         if (cancelled) return
         setPdfUrl(URL.createObjectURL(blob))
         setStatus('ready')
@@ -117,4 +121,4 @@ const styles = {
     padding: 16,
     textAlign: 'center',
   },
-} 
+}
