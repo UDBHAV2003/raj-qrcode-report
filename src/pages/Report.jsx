@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, Navigate, Link } from 'react-router-dom'
-import { PDFViewer, PDFDownloadLink, usePDF } from '@react-pdf/renderer'
+import { usePDF } from '@react-pdf/renderer'
 import Header from '../components/Header'
 import { usePatients } from '../context/PatientContext'
 import ReportDocument, {
@@ -174,29 +174,25 @@ export default function Report() {
   ])
 
   // ------------------------------------------------------------
-  // Force PDF refresh when patient/codes/report/letterhead change
+  // SINGLE render pipeline.
+  //
+  // Previously this page rendered the SAME `doc` through THREE separate
+  // react-pdf pipelines at once — usePDF(), <PDFViewer>, and
+  // <PDFDownloadLink> — each of which does its own full, synchronous
+  // page-layout pass. react-pdf's layout engine blocks the main thread
+  // while it runs, so toggling the letterhead checkbox (which rebuilds
+  // `doc`, now heavier thanks to the letterhead's extra grid card + FLAG
+  // column) fired that expensive work three times simultaneously —
+  // which is what looked like the page "hanging".
+  //
+  // Now there's only ONE render (via usePDF). The preview below is a
+  // plain <iframe src={instance.url}>, and download/print both reuse the
+  // same instance.url — no duplicate rendering.
   // ------------------------------------------------------------
-  const pdfKey = preparedPatient
-    ? [
-        preparedPatient.id,
-        preparedPatient.reportDate,
-        preparedPatient.sampleDate,
-        preparedPatient.status,
-        withLetterhead ? 'with-letterhead' : 'without-letterhead',
-        preparedPatient.qrCodeDataUrl
-          ? 'qr-ready'
-          : 'qr-missing',
-        preparedPatient.barcodeDataUrl
-          ? 'barcode-ready'
-          : 'barcode-missing',
-      ].join('-')
-    : 'no-patient'
-
   const [instance, updatePDFInstance] = usePDF({
     document: doc,
   })
 
-  // Update usePDF instance whenever document changes.
   useEffect(() => {
     if (
       doc &&
@@ -440,18 +436,24 @@ export default function Report() {
             🖨 Print
           </button>
 
-          <PDFDownloadLink
-            key={pdfKey}
-            document={doc}
-            fileName={fileName}
+          {/* Download now reuses the SAME usePDF() instance instead of
+              spinning up a second react-pdf render via PDFDownloadLink. */}
+          <a
+            href={instance.url || undefined}
+            download={fileName}
             className="btn btn-primary"
-          >
-            {({ loading }) =>
-              loading
-                ? 'Preparing PDF…'
-                : 'Download PDF ⬇'
+            aria-disabled={instance.loading || !instance.url}
+            onClick={(e) => {
+              if (instance.loading || !instance.url) e.preventDefault()
+            }}
+            style={
+              instance.loading || !instance.url
+                ? { opacity: 0.6, pointerEvents: 'none' }
+                : undefined
             }
-          </PDFDownloadLink>
+          >
+            {instance.loading ? 'Preparing PDF…' : 'Download PDF ⬇'}
+          </a>
 
         </div>
 
@@ -461,16 +463,31 @@ export default function Report() {
             : 'Previewing the premium drawn letterhead — the same version someone sees when they scan the report\'s QR code.'}
         </p>
 
-        {/* PDF VIEWER */}
+        {/* PDF PREVIEW — a plain iframe pointed at the SAME usePDF()
+            blob URL, instead of a second full react-pdf render via
+            <PDFViewer>. */}
         <div className="panel pdf-panel">
-          <PDFViewer
-            key={pdfKey}
-            width="100%"
-            height="900"
-            showToolbar
-          >
-            {doc}
-          </PDFViewer>
+          {instance.loading || !instance.url ? (
+            <div
+              style={{
+                minHeight: 900,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Rendering PDF…
+            </div>
+          ) : (
+            <iframe
+              key={instance.url}
+              src={instance.url}
+              title="Report preview"
+              width="100%"
+              height="900"
+              style={{ border: 'none' }}
+            />
+          )}
         </div>
 
       </main>
